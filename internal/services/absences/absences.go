@@ -4,7 +4,6 @@ import (
 	"context"
 	"go.uber.org/zap"
 	"proteiservice/internal/domain/models"
-	"strconv"
 )
 
 const NoAbsence = -1
@@ -13,16 +12,19 @@ type Absences struct {
 	log            *zap.Logger
 	employeeGetter EmployeeGetter
 	absenceGetter  AbsenceGetter
+	emojis         map[int]string
 }
 
 func New(
 	log *zap.Logger,
 	employeeGetter EmployeeGetter,
-	absenceGetter AbsenceGetter) *Absences {
+	absenceGetter AbsenceGetter,
+	emojis map[int]string) *Absences {
 	return &Absences{
 		log:            log,
 		employeeGetter: employeeGetter,
 		absenceGetter:  absenceGetter,
+		emojis:         emojis,
 	}
 }
 
@@ -46,5 +48,5 @@ func (a *Absences) GetUser(ctx context.Context, email string) (string, error) {
 	if id == NoAbsence {
 		return employee.Name, nil
 	}
-	return employee.Name + strconv.Itoa(id), nil
+	return employee.Name + a.emojis[id], nil
 }

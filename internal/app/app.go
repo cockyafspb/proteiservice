@@ -14,7 +14,7 @@ type App struct {
 
 func New(log *zap.Logger, cfg config.Config) *App {
 	httpManager := transport.New(log, cfg.HTTP.Ip, cfg.HTTP.Port, cfg.AuthData.Login, cfg.AuthData.Password)
-	absenceService := absences.New(log, httpManager, httpManager)
+	absenceService := absences.New(log, httpManager, httpManager, cfg.Emojis)
 	grpcApp := grpcapp.New(log, absenceService, cfg.GRPC.Port)
 
 	return &App{GRPCServer: grpcApp}
