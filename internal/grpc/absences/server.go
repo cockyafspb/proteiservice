@@ -9,7 +9,7 @@ import (
 )
 
 type Absences interface {
-	GetUser(ctx context.Context, email string) (fullName string, err error)
+	GetUser(ctx context.Context, email string) (string, bool, error)
 }
 
 type serverAPI struct {
@@ -29,14 +29,20 @@ func (s *serverAPI) GetUser(
 		return nil, status.Error(codes.InvalidArgument, "email is required")
 	}
 
-	fullName, err := s.absences.GetUser(ctx, req.GetEmail())
+	fullName, ok, err := s.absences.GetUser(ctx, req.GetEmail())
 	if err != nil {
-		// TODO: ...
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 
+	if ok {
+		return &proteiservice1.GetUserResponse{
+			Ok:       true,
+			FullName: fullName,
+		}, nil
+	}
+
 	return &proteiservice1.GetUserResponse{
-		Ok:       true,
+		Ok:       false,
 		FullName: fullName,
 	}, nil
 }

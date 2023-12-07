@@ -37,7 +37,6 @@ func main() {
 	logger.Info("Application stopped")
 }
 
-// TODO: подключить pretty logger
 func createLogger(env string) *zap.Logger {
 	encoderCfg := zap.NewProductionEncoderConfig()
 	encoderCfg.TimeKey = "timestamp"

@@ -36,17 +36,17 @@ type AbsenceGetter interface {
 	GetAbsence(employee *models.Employee) (int, error)
 }
 
-func (a *Absences) GetUser(_ context.Context, email string) (string, error) {
+func (a *Absences) GetUser(_ context.Context, email string) (string, bool, error) {
 	employee, err := a.employeeGetter.GetEmployee(email)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	id, err := a.absenceGetter.GetAbsence(employee)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	if id == NoAbsence {
-		return employee.Name, nil
+		return employee.Name, false, nil
 	}
-	return employee.Name + a.emojis[id], nil
+	return employee.Name + a.emojis[id], true, nil
 }
