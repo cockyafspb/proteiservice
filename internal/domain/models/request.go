@@ -15,7 +15,7 @@ type Request struct {
 }
 
 type ResultRequest struct {
+	Err  error
 	Name string
 	Ok   bool
-	Err  error
 }

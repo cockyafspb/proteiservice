@@ -22,7 +22,6 @@ func New(
 	emojis map[int]string,
 	requestQueue chan models.Request,
 	resultQueue chan models.ResultRequest) *Absences {
-
 	return &Absences{
 		log:            log,
 		employeeGetter: employeeGetter,
