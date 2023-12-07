@@ -1,0 +1,24 @@
+env: "local" # dev, prod
+http:
+  ip: 127.0.0.1
+  port: 8090
+grpc:
+  port: 8080
+  timeout: 10h
+auth:
+  login: 'login'
+  password: "password"
+emojis:
+  1: "\u0041"
+  2: "\u0041"
+  3: "\u0041"
+  4: "\u0041"
+  5: "\u0041"
+  6: "\u0041"
+  7: "\u0041"
+  8: "\u0041"
+  9: "\u0041"
+  10: "\u0041"
+  11: "\u0041"
+  12: "\u0041"
+  13: "\u0041"

@@ -21,9 +21,9 @@ type HTTPManager struct {
 	log      *zap.Logger
 	client   *http.Client
 	ip       string
-	port     int
 	login    string
 	password string
+	port     int
 }
 
 func (m *HTTPManager) GetEmployee(email string) (*models.Employee, error) {
@@ -49,13 +49,16 @@ func (m *HTTPManager) GetEmployee(email string) (*models.Employee, error) {
 	defer resp.Body.Close()
 	var body models.EmployeesRequestBody
 	resBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	err = json.Unmarshal(resBody, &body)
 	if err != nil {
 		return nil, err
 	}
 	var employee *models.Employee
-	for _, v := range body.Data {
-		employee = &v
+	for i := range body.Data {
+		employee = &body.Data[i]
 		break
 	}
 	if employee == nil {
@@ -77,25 +80,33 @@ func (m *HTTPManager) GetAbsence(employee *models.Employee) (int, error) {
 		"POST",
 		fmt.Sprintf("https://%s:%d/Portal/springApi/absences", m.ip, m.port),
 		bytes.NewReader(reqBodyByteArray))
+	if err != nil {
+		return NilValue, err
+	}
 	req.SetBasicAuth(m.login, m.password)
 	resp, err := m.client.Do(req)
+	if err != nil {
+		return NilValue, err
+	}
 	defer resp.Body.Close()
 	var body models.AbsenceRequestBody
 	resBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return NilValue, err
+	}
 	err = json.Unmarshal(resBody, &body)
 	if err != nil {
 		return NilValue, err
 	}
 	var absence *models.Absence
-	for _, v := range body.Data {
-		absence = &v
+	for i := range body.Data {
+		absence = &body.Data[i]
 		break
 	}
 	if absence == nil {
 		return NoAbsence, nil
 	}
 	return absence.ReasonId, nil
-
 }
 
 func New(log *zap.Logger, ip string, port int, login string, password string) *HTTPManager {

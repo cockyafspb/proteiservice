@@ -6,8 +6,8 @@ type EmployeesRequestBody struct {
 }
 
 type Employee struct {
-	Id        int    `json:"id"`
 	Name      string `json:"displayName"`
 	Email     string `json:"email"`
 	WorkPhone string `json:"workPhone"`
+	Id        int    `json:"id"`
 }

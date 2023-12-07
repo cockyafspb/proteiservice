@@ -36,7 +36,7 @@ type AbsenceGetter interface {
 	GetAbsence(employee *models.Employee) (int, error)
 }
 
-func (a *Absences) GetUser(ctx context.Context, email string) (string, error) {
+func (a *Absences) GetUser(_ context.Context, email string) (string, error) {
 	employee, err := a.employeeGetter.GetEmployee(email)
 	if err != nil {
 		return "", err

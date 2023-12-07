@@ -6,10 +6,10 @@ type AbsenceRequestBody struct {
 }
 
 type Absence struct {
-	Id          int    `json:"id"`
-	PersonId    int    `json:"personId"`
 	CreatedDate string `json:"createdDate"`
 	DateFrom    string `json:"dateFrom"`
 	DateTo      string `json:"dateTo"`
+	Id          int    `json:"id"`
+	PersonId    int    `json:"personId"`
 	ReasonId    int    `json:"reasonId"`
 }
