@@ -8,6 +8,8 @@ grpc:
 auth:
   login: 'login'
   password: "password"
+workers_number: 10
+queue_size: 5
 emojis:
   1: "\u0041"
   2: "\u0041"

@@ -7,13 +7,15 @@ import (
 	"os/signal"
 	"proteiservice/internal/app"
 	"proteiservice/internal/config"
+	"proteiservice/internal/domain/models"
 	"syscall"
 )
 
 const (
-	envLocal = "local"
-	envDev   = "dev"
-	envProd  = "prod"
+	envLocal  = "local"
+	envDev    = "dev"
+	envProd   = "prod"
+	NoAbsence = -1
 )
 
 func main() {
@@ -22,7 +24,33 @@ func main() {
 
 	logger.Info("Setup succeeded")
 
-	application := app.New(logger, *cfg)
+	requestQueue := make(chan models.Request, cfg.QueueSize)
+	resultQueue := make(chan models.ResultRequest, cfg.QueueSize)
+
+	application := app.New(logger, *cfg, requestQueue, resultQueue)
+
+	emojis := cfg.Emojis
+
+	// Start worker goroutines to process requests from the queue
+	for i := 0; i < cfg.WorkersNumber; i++ {
+		go func() {
+			for req := range requestQueue {
+				employee, err := req.EmployeeGetter.GetEmployee(req.Email)
+				if err != nil {
+					resultQueue <- models.ResultRequest{Err: err}
+				}
+				id, err := req.AbsenceGetter.GetAbsence(employee)
+				if err != nil {
+					resultQueue <- models.ResultRequest{Err: err}
+				}
+				if id == NoAbsence {
+					resultQueue <- models.ResultRequest{Name: employee.Name}
+				}
+				resultQueue <- models.ResultRequest{Name: employee.Name + emojis[id], Ok: true}
+			}
+		}()
+	}
+
 	go func() { application.GRPCServer.MustRun() }()
 
 	stop := make(chan os.Signal, 1)

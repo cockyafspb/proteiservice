@@ -6,25 +6,30 @@ import (
 	"proteiservice/internal/domain/models"
 )
 
-const NoAbsence = -1
-
 type Absences struct {
 	log            *zap.Logger
 	employeeGetter EmployeeGetter
 	absenceGetter  AbsenceGetter
 	emojis         map[int]string
+	requestQueue   chan models.Request
+	resultQueue    chan models.ResultRequest
 }
 
 func New(
 	log *zap.Logger,
 	employeeGetter EmployeeGetter,
 	absenceGetter AbsenceGetter,
-	emojis map[int]string) *Absences {
+	emojis map[int]string,
+	requestQueue chan models.Request,
+	resultQueue chan models.ResultRequest) *Absences {
+
 	return &Absences{
 		log:            log,
 		employeeGetter: employeeGetter,
 		absenceGetter:  absenceGetter,
 		emojis:         emojis,
+		requestQueue:   requestQueue,
+		resultQueue:    resultQueue,
 	}
 }
 
@@ -37,16 +42,11 @@ type AbsenceGetter interface {
 }
 
 func (a *Absences) GetUser(_ context.Context, email string) (string, bool, error) {
-	employee, err := a.employeeGetter.GetEmployee(email)
-	if err != nil {
-		return "", false, err
+	a.requestQueue <- models.Request{
+		EmployeeGetter: a.employeeGetter,
+		AbsenceGetter:  a.absenceGetter,
+		Email:          email,
 	}
-	id, err := a.absenceGetter.GetAbsence(employee)
-	if err != nil {
-		return "", false, err
-	}
-	if id == NoAbsence {
-		return employee.Name, false, nil
-	}
-	return employee.Name + a.emojis[id], true, nil
+	res := <-a.resultQueue
+	return res.Name, res.Ok, res.Err
 }

@@ -8,11 +8,13 @@ import (
 )
 
 type Config struct {
-	Emojis   map[int]string `yaml:"emojis"`
-	AuthData AuthConfig     `yaml:"auth" env-required:"true"`
-	Env      string         `yaml:"env" env-default:"local"`
-	HTTP     HTTPConfig     `yaml:"http"`
-	GRPC     GRPCConfig     `yaml:"grpc"`
+	Emojis        map[int]string `yaml:"emojis"`
+	AuthData      AuthConfig     `yaml:"auth" env-required:"true"`
+	Env           string         `yaml:"env" env-default:"local"`
+	HTTP          HTTPConfig     `yaml:"http"`
+	GRPC          GRPCConfig     `yaml:"grpc"`
+	QueueSize     int            `yaml:"queue_size"`
+	WorkersNumber int            `yaml:"workers_number"`
 }
 
 type HTTPConfig struct {
