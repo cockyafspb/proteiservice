@@ -13,19 +13,16 @@ type Absences struct {
 	log            *zap.Logger
 	employeeGetter EmployeeGetter
 	absenceGetter  AbsenceGetter
-	ip             string
-	port           int
-	login          string
-	password       string
 }
 
-func New(log *zap.Logger, ip string, port int, login string, password string) *Absences {
+func New(
+	log *zap.Logger,
+	employeeGetter EmployeeGetter,
+	absenceGetter AbsenceGetter) *Absences {
 	return &Absences{
-		log:      log,
-		ip:       ip,
-		port:     port,
-		login:    login,
-		password: password,
+		log:            log,
+		employeeGetter: employeeGetter,
+		absenceGetter:  absenceGetter,
 	}
 }
 
